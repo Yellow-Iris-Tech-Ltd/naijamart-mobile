@@ -35,7 +35,7 @@ import 'dart:io' show Platform;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
+/*
     if (Platform.isAndroid) {
       await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -57,6 +57,7 @@ void main() async {
     }
   
   await FirebaseApi().initNotifications();
+  */
   LocalCache().initialize();
   runApp(const MyApp());
 }
