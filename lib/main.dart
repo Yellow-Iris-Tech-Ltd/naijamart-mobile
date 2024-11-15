@@ -34,14 +34,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
+    if (Platform.isAndroid) {
+      await Firebase.initializeApp(
+      options: const FirebaseOptions(
         apiKey: "AIzaSyAEHJ2kIeSdLoXWd3aNDUJFmju8uEvEDho",
         appId: "1:538896768620:android:b3d9f4a8a0e2f67e0f0249",
         messagingSenderId: "538896768620",
         projectId: "naijamart-e16de"
-    ),
-  );
+      ),
+    );
+    } else if (Platform.isIOS) {
+      await Firebase.initializeApp();
+    }
+  
   await FirebaseApi().initNotifications();
   LocalCache().initialize();
   runApp(const MyApp());
