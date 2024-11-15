@@ -106,7 +106,7 @@ Future<void> _initUserDetails() async {
           builder: (context) => WebViewUI(controller: _controller),
         ),
       );
-      })
+      });
     } catch (e){
       showToastMessage(message: "Failed to launch customer support link");
       debugPrint(e.toString());
