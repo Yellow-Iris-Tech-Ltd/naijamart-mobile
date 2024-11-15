@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "295166277574",
+    "firebase_url": "https://wow-fintech-default-rtdb.firebaseio.com",
+    "project_id": "wow-fintech",
+    "storage_bucket": "wow-fintech.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295166277574:android:58ed677a62e5331304a4c7",
+        "android_client_info": {
+          "package_name": "org.wowng"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZLIV3mNUhBpf6yM6gau5S1LPOYP0sH44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295166277574:android:dcda43ac823abeb804a4c7",
+        "android_client_info": {
+          "package_name": "org.wowng.wow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZLIV3mNUhBpf6yM6gau5S1LPOYP0sH44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
