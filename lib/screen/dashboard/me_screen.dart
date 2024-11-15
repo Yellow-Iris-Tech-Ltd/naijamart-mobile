@@ -99,12 +99,14 @@ Future<void> _initUserDetails() async {
 
     try{
       future: _loadUrl(liveUrl);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => WebViewUI(controller: _controller),
         ),
       );
+      })
     } catch (e){
       showToastMessage(message: "Failed to launch customer support link");
       debugPrint(e.toString());
