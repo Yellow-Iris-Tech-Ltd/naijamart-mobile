@@ -46,7 +46,14 @@ void main() async {
       ),
     );
     } else if (Platform.isIOS) {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyDauRilbL4oXJT3cr_Tb6dxVcn8SpTchgc",
+        appId: "1:538896768620:ios:5a999aa25bc939b90f0249",
+        messagingSenderId: "538896768620",
+        projectId: "naijamart-e16de"
+      ),
+    );
     }
   
   await FirebaseApi().initNotifications();
