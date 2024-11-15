@@ -68,7 +68,7 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
         storyItems: widget.storyItems,
         indicatorForegroundColor: NaijaMartAppColors.YelloGrad1,
 
-        onStoryShow: (s){
+        onStoryShow: (s, i){
           debugPrint("Show is done");
         },
 
