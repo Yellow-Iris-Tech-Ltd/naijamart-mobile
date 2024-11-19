@@ -344,7 +344,8 @@ class _WebViewUIState extends State<WebViewUI> {
                   },
                 ),
               ],
-            )
+            ),
+            Menu(controller: controller)
           ]
         ),
         body: Stack(
