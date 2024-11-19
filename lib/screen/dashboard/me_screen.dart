@@ -204,6 +204,43 @@ Future<void> _initUserDetails() async {
   }
 }
 
+enum _MenuOptions { navigationDelegate, userAgent }
+class Menu extends StatefulWidget {
+  const Menu({required this.controller, Key? key});
+  final WebViewController controller;
+  @override
+  State<Menu> createState() => _MenuState();
+}
+class _MenuState extends State<Menu> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<_MenuOptions>(
+      onSelected: (value) async {
+        switch (value) {
+          case _MenuOptions.navigationDelegate:
+            await widget.controller
+                .loadRequest(Uri.parse("${NaijaMartEndpoints.liveUrl}"));
+            break;
+           case _MenuOptions.userAgent:
+            await widget.controller
+                .loadRequest(Uri.parse('https://docs.google.com/forms/d/e/1FAIpQLSegI23JIYM-huHBrZ_DAKVigu88morvt6kztmYf1CPbe5pTMA/viewform'));
+            break;
+        }
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem<_MenuOptions>(
+          value: _MenuOptions.navigationDelegate,
+          child: Text('Home'),
+        ),
+        const PopupMenuItem<_MenuOptions>(
+          value: _MenuOptions.userAgent,
+          child: Text('Delete Data'),
+        ),
+      ],
+    );
+  }
+}
+
 class WebViewUI extends StatefulWidget {
   final WebViewController controller;
   const WebViewUI({super.key, required this.controller});
