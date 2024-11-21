@@ -68,7 +68,7 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
 
     final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
     _controller = WebViewController(..loadRequest(
-        liveUrl
+        liveUrl,
       ););
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     storage = EncryptedStorage();
