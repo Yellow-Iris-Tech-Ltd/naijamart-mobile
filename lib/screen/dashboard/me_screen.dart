@@ -65,10 +65,42 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
     final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
   };
+  final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
 
     var loadingPercentage = 0;
     
-    _controller = WebViewController();
+    _controller = WebViewController()
+    ..setNavigationDelegate(NavigationDelegate(
+        onPageStarted: (url) {
+          setState(() {
+            loadingPercentage = 0;
+          });
+        },
+        onProgress: (progress) {
+          setState(() {
+            loadingPercentage = progress;
+          });
+        },
+        onPageFinished: (url) {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
+      ))
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'SnackBar',
+        onMessageReceived: (message) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            message.message,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          )));
+        },
+      )
+      ..loadRequest(
+       liveUrl,
+      );
     storage = EncryptedStorage();
 
 
@@ -98,9 +130,9 @@ Future<void> _initUserDetails() async {
     );
 
     
-  
+    /*
     try{
-      //future: _loadUrl(liveUrl);
+    future: _loadUrl(liveUrl);
       WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
@@ -113,97 +145,83 @@ Future<void> _initUserDetails() async {
       showToastMessage(message: "Failed to launch customer support link");
       debugPrint(e.toString());
     }
+    */
     
  
 
     final w = MediaQuery.of(context).size.width, h = MediaQuery.of(context).size.height;
 
-    return SafeArea(
-        child: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop)  {
-            if(didPop){
-              // showToastMessage(message: "Back key pressed");
-            }
-          },
-          child: Scaffold(
-            backgroundColor: const Color(0xFFF1F1F1),
-            body:
-            NotificationListener<ScrollNotification>(
-              onNotification: (notification){
-                if(notification is ScrollUpdateNotification){
-                  onUserInteraction();
-                }
-                return true;
-              },
-              child: RefreshIndicator(
-                color: NaijaMartAppColors.YellowGrad2,
-                backgroundColor: Colors.white,
-                onRefresh: _initUserDetails,
-                child: SingleChildScrollView(
-                  child: SizedBox(
-                    width: w,
-                    // height: h * 2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Column(
-
-                        children: <Widget>[
-                          const SizedBox(height: 5),
-                          SizedBox(
-                            width: w,
-                            height: h * .1,
-                            child:
-                            Stack(
-                              alignment: Alignment.center,
-                              children: <Widget>[
-                                Positioned(
-                                    left: 0,
-                                    top: 10,
-                                    child: BlackSquareButton(
-                                      icon: Icons.chevron_left,
-                                      borderColor: Colors.black,
-                                      onPressed: () {
-                                        onUserInteraction();
-                                        // Navigator.pop(context);
-                                        Navigator.of(context).pushNamed(
-                                            DashboardNavigationScreen.routeName,
-                                          arguments: {'initialSelectedIndex': 3},
-                                        );
-                                      },
-                                    )
-                                ),
-                                const Positioned(
-                                  top: 15,
-                                  child: Text("Profile", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.notifications_none), onPressed: () {
-                                    onUserInteraction();
-                                    Navigator.of(context).pushNamed(
-                                      AllNotificationsScreen.routeName,);
-                                  },
-                                  ),
-
-                                ),
-
-                              ],
-                            ),
-
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+     return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("NaijaMart"),
+          actions: [
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    if (await _controller.canGoBack()) {
+                      await _controller.goBack();
+                    } else {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                            duration: Duration(milliseconds: 200),
+                            content: Text(
+                              'Can\'t go back',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                      );
+                      return;
+                    }
+                  },
                 ),
-              ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  onPressed: () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    if (await _controller.canGoForward()) {
+                      await _controller.goForward();
+                    } else {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                            duration: Duration(milliseconds: 200),
+                            content: Text(
+                              'No forward history item',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                      );
+                      return;
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.replay),
+                  onPressed: () {
+                    _controller.reload();
+                  },
+                ),
+              ],
             ),
-          ),
-        )
+            Menu(controller: _controller)
+          ]
+        ),
+        body: Stack(
+              children: [
+                WebViewWidget(controller: _controller),
+                loadingPercentage < 100 ?
+                  LinearProgressIndicator(
+                    value: loadingPercentage / 100.0,
+                  ) : Container()
+              ],
+        ),
+      ),
     );
+
   }
 }
 
