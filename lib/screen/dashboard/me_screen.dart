@@ -34,10 +34,12 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
 
   late final WebViewController _controller; // = WebViewController();
   final LocalCache _localCache = LocalCache();
-
+  var loadingPercentage = 0;
 
   late final EncryptedStorage storage;
 
+  final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
+  
   String? _userFirstName;
   String? _userSecondName;
   String? _userName;
@@ -65,9 +67,6 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
     final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
   };
-  final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
-
-    var loadingPercentage = 0;
     
     _controller = WebViewController()
     ..setNavigationDelegate(NavigationDelegate(
