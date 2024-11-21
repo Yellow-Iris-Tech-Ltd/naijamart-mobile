@@ -65,7 +65,11 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
     final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
     Factory(() => EagerGestureRecognizer())
   };
-    _controller = WebViewController();
+
+    final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
+    _controller = WebViewController(..loadRequest(
+        liveUrl
+      ););
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     storage = EncryptedStorage();
 
@@ -95,10 +99,10 @@ Future<void> _initUserDetails() async {
       ),
     );
 
-    final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
+    
 
     try{
-      future: _loadUrl(liveUrl);
+      //future: _loadUrl(liveUrl);
       WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
