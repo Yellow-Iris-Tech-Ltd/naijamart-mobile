@@ -66,12 +66,9 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> with AutomaticLog
     Factory(() => EagerGestureRecognizer())
   };
 
-    final Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
-    _controller = WebViewController()
-    ..loadRequest(
-        liveUrl,
-      );
-    _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    var loadingPercentage = 0;
+    
+    _controller = WebViewController();
     storage = EncryptedStorage();
 
 
@@ -101,7 +98,7 @@ Future<void> _initUserDetails() async {
     );
 
     
-
+  
     try{
       //future: _loadUrl(liveUrl);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -116,6 +113,7 @@ Future<void> _initUserDetails() async {
       showToastMessage(message: "Failed to launch customer support link");
       debugPrint(e.toString());
     }
+    
  
 
     final w = MediaQuery.of(context).size.width, h = MediaQuery.of(context).size.height;
@@ -255,12 +253,45 @@ class WebViewUI extends StatefulWidget {
 }
 
 class _WebViewUIState extends State<WebViewUI> {
+  Uri liveUrl = Uri.parse("${NaijaMartEndpoints.liveUrl}");
   var loadingPercentage = 0;
   late WebViewController controller;
   @override
   void initState(){
     super.initState();
     controller = widget.controller;
+    controller.setNavigationDelegate(NavigationDelegate(
+        onPageStarted: (url) {
+          setState(() {
+            loadingPercentage = 0;
+          });
+        },
+        onProgress: (progress) {
+          setState(() {
+            loadingPercentage = progress;
+          });
+        },
+        onPageFinished: (url) {
+          setState(() {
+            loadingPercentage = 100;
+          });
+        },
+      ));
+    controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    controller.addJavaScriptChannel(
+        'SnackBar',
+        onMessageReceived: (message) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            message.message,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          )));
+        },
+      );
+      controller.loadRequest(
+        liveUrl,
+      );
+    /*
     widget.controller.setNavigationDelegate(
       NavigationDelegate(
         onPageStarted: (url){
@@ -286,6 +317,7 @@ class _WebViewUIState extends State<WebViewUI> {
     widget.controller.addJavaScriptChannel("Snackbar", onMessageReceived: (message){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message.message)));
     });
+    */
   }
 
 
