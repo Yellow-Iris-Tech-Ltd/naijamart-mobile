@@ -1,46 +1,51 @@
 {
   "project_info": {
-    "project_number": "295166277574",
-    "firebase_url": "https://wow-fintech-default-rtdb.firebaseio.com",
-    "project_id": "wow-fintech",
-    "storage_bucket": "wow-fintech.appspot.com"
+    "project_number": "538896768620",
+    "project_id": "naijamart-e16de",
+    "storage_bucket": "naijamart-e16de.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:295166277574:android:58ed677a62e5331304a4c7",
+        "mobilesdk_app_id": "1:538896768620:android:b3d9f4a8a0e2f67e0f0249",
         "android_client_info": {
-          "package_name": "org.wowng"
+          "package_name": "com.naijamart.tech"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "538896768620-iph3cv1j76jvsgq52e126ea0g3t9mspe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naijamart.tech",
+            "certificate_hash": "a1f0226b3e84db0f31af1e5100bbe85cbdfa255a"
+          }
+        },
+        {
+          "client_id": "538896768620-80dnerc2po99j6o31ar2knk82lt07150.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyAZLIV3mNUhBpf6yM6gau5S1LPOYP0sH44"
+          "current_key": "AIzaSyAEHJ2kIeSdLoXWd3aNDUJFmju8uEvEDho"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:295166277574:android:dcda43ac823abeb804a4c7",
-        "android_client_info": {
-          "package_name": "org.wowng.wow"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAZLIV3mNUhBpf6yM6gau5S1LPOYP0sH44"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "538896768620-80dnerc2po99j6o31ar2knk82lt07150.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "538896768620-n2rhipt2k7q8cem669lf2e5r2ssf6pub.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.naijamart.tech"
+              }
+            }
+          ]
         }
       }
     }
