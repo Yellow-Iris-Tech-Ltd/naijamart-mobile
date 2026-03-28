@@ -28,3 +28,11 @@ plugins {
 }
 
 include ":app"
+
+gradle.beforeProject { project ->
+    project.afterEvaluate {
+        if (project.plugins.hasPlugin("com.android.library") && project.android.namespace == null) {
+            project.android.namespace = project.group.toString()
+        }
+    }
+}
