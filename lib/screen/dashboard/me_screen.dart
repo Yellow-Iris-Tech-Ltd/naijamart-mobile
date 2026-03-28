@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io' show Cookie;
 import '../../util/constants/endpoints_uri.dart';
-import 'home/all_notifications_screen.dart';
 
 class MeDashboardScreen extends StatefulWidget {
   static const routeName = '/me';
@@ -28,15 +25,20 @@ class _MeDashboardScreenState extends State<MeDashboardScreen> {
   Future<void> _initWebView() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('naijamart_token') ?? '';
+    
+    final cookieManager = WebViewCookieManager();
+    
     if (token.isNotEmpty) {
-      final cookieManager = WebViewCookieManager();
-      await cookieManager.setCookies([
-        Cookie('naijamart_token', token)
-          ..domain = 'www.naijamart.com'
-          ..path = '/'
-          ..httpOnly = false,
-      ]);
+      await cookieManager.setCookie(
+        WebViewCookie(
+          name: 'naijamart_token',
+          value: token,
+          domain: 'www.naijamart.com',
+          path: '/',
+        ),
+      );
     }
+    
     _controller = WebViewController()
       ..setNavigationDelegate(NavigationDelegate(
         onPageStarted: (url) => setState(() => loadingPercentage = 0),
