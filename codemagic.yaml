@@ -27,6 +27,8 @@ workflows:
       - name: Install CocoaPods
         script: |
           cd ios
+          rm -f Podfile.lock
+          pod repo update
           pod install
       - name: Build IPA
         script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
