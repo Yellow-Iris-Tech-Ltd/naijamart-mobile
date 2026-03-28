@@ -28,6 +28,19 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  # Location tracking
+  geolocator: ^11.0.0
+  
+  # Push notifications
+  firebase_core: ^2.27.0
+  firebase_messaging: ^14.7.19
+  flutter_local_notifications: ^17.0.0
+  
+  # Storage & HTTP
+  shared_preferences: ^2.2.2
+  http: ^1.2.0
+
+  
   flutter:
     sdk: flutter
 
