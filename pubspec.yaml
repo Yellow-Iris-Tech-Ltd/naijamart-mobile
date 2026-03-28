@@ -13,7 +13,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.7
-  google_fonts: ^4.0.5
+  google_fonts: ^6.1.0
   velocity_x: ^4.2.1
   smooth_page_indicator: ^1.0.0
   dots_indicator: ^3.0.0
@@ -43,7 +43,7 @@ dependencies:
   skeletonizer: ^1.1.1
   shimmer: ^3.0.0
   skeleton_text: ^3.0.1
-  webview_flutter: ^4.4.1
+  webview_flutter: 4.4.4
   firebase_core: ^2.4.1
   firebase_messaging: ^14.7.10
   firebase_auth: ^4.17.0
