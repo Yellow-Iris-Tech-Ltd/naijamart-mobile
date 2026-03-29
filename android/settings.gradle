@@ -6,15 +6,12 @@ pluginManagement {
         assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
         return flutterSdkPath
     }()
-
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
     }
-
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
-
     plugins {
         id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
         id "org.jetbrains.kotlin.android" version "1.9.22" apply false
@@ -31,8 +28,13 @@ include ":app"
 
 gradle.beforeProject { project ->
     project.afterEvaluate {
-        if (project.plugins.hasPlugin("com.android.library") && project.android.namespace == null) {
-            project.android.namespace = project.group.toString()
+        if (project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                if (namespace == null) {
+                    namespace = project.group?.toString() ?: "com.example.${project.name.replace('-', '_')}"
+                }
+                compileSdkVersion 34
+            }
         }
     }
 }
