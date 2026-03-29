@@ -6,6 +6,10 @@ workflows:
       flutter: 3.24.0
       java: 17
     scripts:
+      - name: Clean Flutter
+        script: |
+          flutter clean
+          rm -rf ~/.pub-cache/hosted/pub.dev/geolocator*
       - name: Get dependencies
         script: flutter pub get
       - name: Build APK

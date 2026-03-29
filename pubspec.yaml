@@ -76,3 +76,6 @@ flutter:
     - assets/images/dashboard/card/
     - assets/images/theme5/
     - assets/images/flags/
+
+dependency_overrides:
+  geolocator_android: 4.1.8
