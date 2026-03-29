@@ -76,3 +76,5 @@ flutter:
     - assets/images/dashboard/card/
     - assets/images/theme5/
     - assets/images/flags/
+dependency_overrides:
+  font_awesome_flutter: 10.6.0
