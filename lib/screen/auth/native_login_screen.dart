@@ -34,12 +34,10 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       );
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
-      final String? firebaseIdToken = await userCredential.user?.getIdToken();
-      if (firebaseIdToken == null) throw Exception('Could not get authentication token');
       final response = await http.post(
         Uri.parse('https://naijamart.com/api/auth/google/mobile'),
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-        body: jsonEncode({'id_token': firebaseIdToken}),
+        body: jsonEncode({'id_token': googleAuth.idToken}),
       );
       if (response.statusCode != 200) {
         throw Exception('Sign-in failed. Please try again. (${response.statusCode})');
