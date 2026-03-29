@@ -6,17 +6,17 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(":app")
-    afterEvaluate { project ->
+}
+
+gradle.projectsEvaluated {
+    subprojects { project ->
         if (project.hasProperty('android')) {
-            project.android {
-                if (namespace == null) {
-                    namespace = project.group ?: "com.example.${project.name.replace(':', '.').replace('-', '_')}"
-                }
+            if (project.android.namespace == null) {
+                project.android.namespace = "com.example.${project.name.replace(':', '.').replace('-', '_')}"
             }
         }
     }
