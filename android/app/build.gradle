@@ -32,7 +32,6 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.naijamart.tech"
     compileSdk 36
-    ndkVersion flutter.ndkVersion
 
     compileOptions {
         coreLibraryDesugaringEnabled true
