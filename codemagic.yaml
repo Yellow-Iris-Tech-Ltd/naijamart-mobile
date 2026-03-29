@@ -10,6 +10,12 @@ workflows:
     scripts:
       - name: Get dependencies
         script: flutter pub get
+      - name: Set up key properties
+        script: |
+          echo "storePassword=$CM_KEYSTORE_PASSWORD" > android/key.properties
+          echo "keyPassword=$CM_KEY_PASSWORD" >> android/key.properties
+          echo "keyAlias=$CM_KEY_ALIAS" >> android/key.properties
+          echo "storeFile=$CM_KEYSTORE_PATH" >> android/key.properties
       - name: Build APK
         script: flutter build apk --release
     artifacts:
