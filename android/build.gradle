@@ -1,3 +1,16 @@
+buildscript {
+    ext.kotlin_version = '1.9.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.4.0'
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -5,21 +18,9 @@ allprojects {
     }
 }
 
-rootProject.buildDir = "../build"
-
+rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-    project.evaluationDependsOn(":app")
-}
-
-gradle.projectsEvaluated {
-    subprojects { project ->
-        if (project.hasProperty('android')) {
-            if (project.android.namespace == null) {
-                project.android.namespace = "com.example.${project.name.replace(':', '.').replace('-', '_')}"
-            }
-        }
-    }
 }
 
 tasks.register("clean", Delete) {
