@@ -5,13 +5,13 @@ workflows:
     environment:
       flutter: 3.24.0
       java: 17
-      groups:
-        - android_keystore
     scripts:
       - name: Get dependencies
         script: flutter pub get
       - name: Build APK
         script: flutter build apk --release
+      - name: Build AAB
+        script: flutter build appbundle --release
     artifacts:
       - build/**/outputs/**/*.apk
       - build/**/outputs/**/*.aab
