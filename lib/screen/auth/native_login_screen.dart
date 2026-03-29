@@ -37,7 +37,7 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       final String? firebaseIdToken = await userCredential.user?.getIdToken();
       if (firebaseIdToken == null) throw Exception('Could not get authentication token');
       final response = await http.post(
-        Uri.parse('${NaijaMartEndpoints.baseUrl}auth/google/mobile'),
+        Uri.parse('https://naijamart.com/api/auth/google/mobile'),
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
         body: jsonEncode({'id_token': firebaseIdToken}),
       );
