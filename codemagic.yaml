@@ -3,24 +3,15 @@ workflows:
     name: Android Build
     max_build_duration: 60
     environment:
-      flutter: 3.24.0
+      flutter: 3.22.3
       java: 17
-    cache:
-      cache_paths: []
     scripts:
-      - name: Clean
-        script: |
-          flutter clean
-          flutter pub cache clean --force
       - name: Get dependencies
         script: flutter pub get
       - name: Build APK
         script: flutter build apk --release
-      - name: Build AAB
-        script: flutter build appbundle --release
     artifacts:
       - build/**/outputs/**/*.apk
-      - build/**/outputs/**/*.aab
 
   ios-workflow:
     name: iOS Build
@@ -49,7 +40,3 @@ workflows:
         script: flutter build ipa --release --export-options-plist=$HOME/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: false
