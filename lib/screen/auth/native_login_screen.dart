@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../util/constants/endpoints_uri.dart';
 import '../dashboard/me_screen.dart';
+import 'native_signup_screen.dart';
 
 class NativeLoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -15,9 +15,12 @@ class NativeLoginScreen extends StatefulWidget {
 }
 
 class _NativeLoginScreenState extends State<NativeLoginScreen> {
-  // NaijaMart brand colors
-  static const Color navyBlue = Color(0xFF001F3F);
-  static const Color gold = Color(0xFFC9A24E);
+  // Colors matching web design
+  static const Color primaryPurple = Color(0xFF6366F1);
+  static const Color logoGreen = Color(0xFF22C55E);
+  static const Color darkText = Color(0xFF1F2937);
+  static const Color grayText = Color(0xFF6B7280);
+  static const Color borderGray = Color(0xFFE5E7EB);
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -35,7 +38,6 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
     super.dispose();
   }
 
-  // Email/Password login
   Future<void> _signInWithEmail() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -84,7 +86,6 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
     }
   }
 
-  // Google Sign-In (existing working code preserved)
   Future<void> _signInWithGoogle() async {
     setState(() {
       _isGoogleLoading = true;
@@ -102,15 +103,14 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
       final response = await http.post(
         Uri.parse('https://naijamart.com/api/auth/google/mobile'),
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
         body: jsonEncode({'id_token': googleAuth.idToken}),
       );
       if (response.statusCode != 200) {
-        throw Exception('Sign-in failed. Please try again. (${response.statusCode})');
+        throw Exception('Sign-in failed. Please try again.');
       }
       final Map<String, dynamic> data = jsonDecode(response.body);
       final String naijamartToken = data['token'];
@@ -129,24 +129,23 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
     }
   }
 
-  Future<void> _browseWithoutSignIn() async {
-    Navigator.pushReplacement(
+  void _navigateToSignup() {
+    Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const MeDashboardScreen()),
+      MaterialPageRoute(builder: (_) => const NativeSignupScreen()),
     );
   }
 
   void _navigateToForgotPassword() {
-    // TODO: Implement forgot password screen or WebView
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Opening password reset...')),
     );
   }
 
-  void _navigateToRegister() {
-    // TODO: Implement register screen or WebView
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening registration...')),
+  void _browseWithoutSignIn() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MeDashboardScreen()),
     );
   }
 
@@ -156,101 +155,34 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 48),
-
-                // Logo
+                const SizedBox(height: 60),
                 _buildLogo(),
-
+                const SizedBox(height: 40),
+                _buildWelcomeText(),
                 const SizedBox(height: 32),
-
-                // Welcome text
-                const Text(
-                  'Welcome Back',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: navyBlue,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Sign in to continue to NaijaMart',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 32),
-
-                // Error message
                 if (_errorMessage != null) _buildErrorMessage(),
-
-                // Email field
                 _buildEmailField(),
-
-                const SizedBox(height: 14),
-
-                // Password field
-                _buildPasswordField(),
-
-                const SizedBox(height: 8),
-
-                // Forgot Password link
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _navigateToForgotPassword,
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 36),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: gold,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ),
-
                 const SizedBox(height: 16),
-
-                // Login button
+                _buildPasswordField(),
+                const SizedBox(height: 8),
+                _buildForgotPassword(),
+                const SizedBox(height: 24),
                 _buildLoginButton(),
-
                 const SizedBox(height: 24),
-
-                // Divider with "Or continue with"
+                _buildSignupLink(),
+                const SizedBox(height: 24),
                 _buildDivider(),
-
                 const SizedBox(height: 24),
-
-                // Google Sign-In button
                 _buildGoogleButton(),
-
-                const SizedBox(height: 28),
-
-                // Create Account link
-                _buildCreateAccountLink(),
-
-                const SizedBox(height: 12),
-
-                // Browse without signing in
-                _buildBrowseWithoutSignInLink(),
-
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
+                _buildBrowseLink(),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -260,64 +192,67 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
   }
 
   Widget _buildLogo() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
-        Image.asset(
-          'assets/images/naijamart_logo.png',
-          height: 80,
-          errorBuilder: (_, __, ___) => Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: navyBlue,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: navyBlue.withOpacity(0.25),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Text(
-                'N',
-                style: TextStyle(
-                  fontSize: 52,
-                  fontWeight: FontWeight.bold,
-                  color: gold,
-                ),
-              ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: logoGreen,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Text(
+            'N',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        RichText(
-          text: const TextSpan(
-            children: [
-              TextSpan(
-                text: 'Naija',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: navyBlue,
-                ),
-              ),
-              TextSpan(
-                text: 'Mart',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: gold,
-                ),
-              ),
-            ],
+        const SizedBox(width: 2),
+        const Text(
+          'aijamart',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: darkText,
           ),
         ),
-        const SizedBox(height: 4),
+        const Text(
+          '.com',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w400,
+            color: grayText,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeText() {
+    return const Column(
+      children: [
         Text(
-          "Nigeria's No.1 Marketplace",
-          style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          'Welcome back',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: darkText,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Log in to your NaijaMart account',
+          style: TextStyle(
+            fontSize: 14,
+            color: grayText,
+          ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -329,7 +264,7 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.red[50],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.red[200]!),
       ),
       child: Row(
@@ -353,31 +288,29 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       keyboardType: TextInputType.emailAddress,
       autocorrect: false,
       textInputAction: TextInputAction.next,
-      style: const TextStyle(fontSize: 15),
+      style: const TextStyle(fontSize: 15, color: darkText),
       decoration: InputDecoration(
-        labelText: 'Email Address',
-        hintText: 'Enter your email',
-        prefixIcon: const Icon(Icons.email_outlined, color: navyBlue, size: 22),
+        hintText: 'Email address',
+        hintStyle: TextStyle(color: grayText.withOpacity(0.7)),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderGray),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderGray),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: gold, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: primaryPurple, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.red),
         ),
-        labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -397,65 +330,74 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
       obscureText: _obscurePassword,
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (_) => _signInWithEmail(),
-      style: const TextStyle(fontSize: 15),
+      style: const TextStyle(fontSize: 15, color: darkText),
       decoration: InputDecoration(
-        labelText: 'Password',
-        hintText: 'Enter your password',
-        prefixIcon: const Icon(Icons.lock_outline, color: navyBlue, size: 22),
+        hintText: 'Password',
+        hintStyle: TextStyle(color: grayText.withOpacity(0.7)),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         suffixIcon: IconButton(
           icon: Icon(
-            _obscurePassword ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey[600],
-            size: 22,
+            _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+            color: grayText,
           ),
-          onPressed: () {
-            setState(() => _obscurePassword = !_obscurePassword);
-          },
+          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
         ),
-        filled: true,
-        fillColor: Colors.grey[50],
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderGray),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderGray),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: gold, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: primaryPurple, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.red),
         ),
-        labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your password';
-        }
-        if (value.length < 6) {
-          return 'Password must be at least 6 characters';
         }
         return null;
       },
     );
   }
 
+  Widget _buildForgotPassword() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: _navigateToForgotPassword,
+        child: const Text(
+          'Forgot password?',
+          style: TextStyle(
+            color: primaryPurple,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoginButton() {
     return SizedBox(
-      height: 52,
+      height: 50,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _signInWithEmail,
         style: ElevatedButton.styleFrom(
-          backgroundColor: navyBlue,
+          backgroundColor: primaryPurple,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: navyBlue.withOpacity(0.6),
+          disabledBackgroundColor: primaryPurple.withOpacity(0.6),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
           elevation: 0,
         ),
@@ -469,41 +411,64 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
                 ),
               )
             : const Text(
-                'Sign In',
+                'Log In',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
       ),
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildSignupLink() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: Text(
-            'Or continue with',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13),
+        const Text(
+          "Don't have an account? ",
+          style: TextStyle(color: grayText, fontSize: 14),
+        ),
+        GestureDetector(
+          onTap: _navigateToSignup,
+          child: const Text(
+            'Sign Up',
+            style: TextStyle(
+              color: primaryPurple,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Row(
+      children: [
+        Expanded(child: Divider(color: borderGray, thickness: 1)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'or',
+            style: TextStyle(color: grayText, fontSize: 14),
+          ),
+        ),
+        Expanded(child: Divider(color: borderGray, thickness: 1)),
       ],
     );
   }
 
   Widget _buildGoogleButton() {
     return SizedBox(
-      height: 52,
+      height: 50,
       child: OutlinedButton(
         onPressed: _isGoogleLoading ? null : _signInWithGoogle,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.grey[300]!, width: 1.5),
+          side: const BorderSide(color: borderGray, width: 1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
           backgroundColor: Colors.white,
         ),
@@ -518,21 +483,21 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
                 children: [
                   Image.network(
                     'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-                    height: 22,
-                    width: 22,
+                    height: 20,
+                    width: 20,
                     errorBuilder: (_, __, ___) => const Icon(
                       Icons.g_mobiledata,
-                      size: 26,
+                      size: 24,
                       color: Colors.red,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
+                  const Text(
                     'Continue with Google',
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w500,
+                      color: darkText,
                     ),
                   ),
                 ],
@@ -541,39 +506,15 @@ class _NativeLoginScreenState extends State<NativeLoginScreen> {
     );
   }
 
-  Widget _buildCreateAccountLink() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "Don't have an account? ",
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
-        ),
-        GestureDetector(
-          onTap: _navigateToRegister,
-          child: const Text(
-            'Create Account',
-            style: TextStyle(
-              color: gold,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBrowseWithoutSignInLink() {
+  Widget _buildBrowseLink() {
     return Center(
-      child: TextButton(
-        onPressed: _browseWithoutSignIn,
+      child: GestureDetector(
+        onTap: _browseWithoutSignIn,
         child: const Text(
           'Browse without signing in',
           style: TextStyle(
-            color: navyBlue,
+            color: grayText,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
             decoration: TextDecoration.underline,
           ),
         ),
